@@ -19,10 +19,15 @@
                 <!-- Post Content -->
                 <p class="card-text">{{ $post->content }}</p>
 
-                <a href="{{ route('posts.edit',$post->id) }}" class="btn btn-secondary mt-3">Edit post</a>
-
                 <!-- Back Button -->
                 <a href="{{ route('posts.index') }}" class="btn btn-secondary mt-3">Back to Posts</a>
+                <a href="{{ route('posts.edit',$post->id) }}" class="btn btn-secondary mt-3">Edit post</a>
+                <form action="{{ route('posts.destroy', $post->id) }}" method="POST" class="mt-3">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-secondary">Delete</button>
+                </form>
+
             </div>
         </div>
     </div>
