@@ -27,11 +27,30 @@
                 <label for="image" class="form-label">Upload Image</label>
                 <input class="form-control" type="text" id="image" name="image" {{-- accept="image/*" --}} />
             </div>
+            <div class="mb-3">
+                <label for="category_id">Category</label>
+                <select class="form-select" name="category_id" id="category_id">
+                    <option value="" selected>Choose category</option>
+                    @foreach($categories as $category)
+                        <option value="{{$category->id}}">{{$category->title}}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="tags">Tags</label>
+                <select multiple class="form-control" id="tags"  name="tags[]">
+                    @foreach($tags as $tag)
+                        <option value="{{$tag->id}}">{{$tag->title}}</option>
+                    @endforeach
+                </select>
+            </div>
+
+
 
             <!-- Submit Button -->
             <button type="submit" class="btn btn-primary">Submit Post</button>
         </form>
     </div>
-
 
 @endsection

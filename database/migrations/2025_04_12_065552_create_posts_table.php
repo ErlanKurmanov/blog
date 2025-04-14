@@ -13,13 +13,20 @@ return new class extends Migration
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('category_id')
+                ->nullable()
+                ->constrained('categories')
+                ->onDelete('cascade');
+
             $table->string('title');
             $table->longText('content')->nullable();
             $table->string('image');
-            $table->boolean('like')->default(false);
-            $table->timestamp('published_at')->nullable();
+            $table->unsignedBigInteger('likes')->nullable();
+            $table->boolean('is_published')->default(1);
             $table->timestamps();
-            $table->timestamp('deleted_at')->nullable();
+            $table->softDeletes();
+
+
         });
     }
 

@@ -36,6 +36,14 @@
 {{--                @endif--}}
             </div>
 
+            <div class="mb-3">
+                <label for="">Category</label>
+                <select class="form-select" name="category_id" >
+                    @foreach($categories as $category)
+                        <option value="{{$category->id}}" {{$post->id ? 'selected' : ''}}>{{$category->title}}</option>
+                    @endforeach
+                </select>
+            </div>
             <!-- Submit Button -->
             <button type="submit" class="btn btn-success">Update Post</button>
         </form>

@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Post;
+use App\Models\PostTag;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -15,7 +18,12 @@ class PostController extends Controller
 
     public function create()
     {
-        return view('post.create');
+        $categories = Category::all();
+        $tags = Tag::all();
+        return view('post.create', [
+            'categories' => $categories,
+            'tags' => $tags
+        ]);
     }
 
     public function store(Request $request)
@@ -23,10 +31,23 @@ class PostController extends Controller
         $validated = $request->validate([
             'title' => 'string',
             'content' => 'string',
-            'image' => 'string'
+            'image' => 'string',
+            'category_id' => 'required|exists:categories,id',
+            'tags' => '',
         ]);
-//        dd($validated);
-        Post::create($validated);
+
+        $tags = $validated['tags'];
+//        dd($tags);
+//        unset($tags);
+
+        $post = Post::create($validated);
+        foreach($tags as $tag){
+            PostTag::firstOrCreate([
+                'tag_id' => $tag,
+                'post_id' => $post->id
+            ]);
+        }
+
         return redirect()->route('posts.index');
     }
 
@@ -41,15 +62,18 @@ class PostController extends Controller
     // Just for redirection from show page.
     public function edit(Post $post)
     {
-        return view('post.edit', compact('post'));
+        $categories = Category::all();
+        return view('post.edit', ['post' => $post, 'categories' => $categories]);
     }
 
     //Sends request to server to update post
     public function update(Request $request, Post $post)
-    {   $validated = $request->validate([
+    {
+        $validated = $request->validate([
             'title' => 'string',
             'content' => 'string',
             'image' => 'string',
+            'category_id' => ''
         ]);
 
         $post->update($validated);
