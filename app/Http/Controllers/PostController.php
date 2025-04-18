@@ -13,7 +13,7 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::all();
-        return view('post.index', ['posts'=>$posts]);
+        return view('post.index', ['posts' => $posts]);
     }
 
     public function create()
@@ -35,18 +35,10 @@ class PostController extends Controller
             'category_id' => 'required|exists:categories,id',
             'tags' => '',
         ]);
-
+        //it's an array of tag's id:
         $tags = $validated['tags'];
-//        dd($tags);
-//        unset($tags);
-
         $post = Post::create($validated);
-        foreach($tags as $tag){
-            PostTag::firstOrCreate([
-                'tag_id' => $tag,
-                'post_id' => $post->id
-            ]);
-        }
+        $post->tags()->attach($tags);
 
         return redirect()->route('posts.index');
     }
@@ -63,22 +55,36 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         $categories = Category::all();
-        return view('post.edit', ['post' => $post, 'categories' => $categories]);
+        $tags = Tag::all();
+
+        return view('post.edit', [
+            'post' => $post,
+            'categories' => $categories,
+            'tags' => $tags]
+        );
     }
 
     //Sends request to server to update post
-    public function update(Request $request, Post $post)
+    public function update(Request $request, int $post)
     {
+        $post = Post::findOrFail($post);
         $validated = $request->validate([
             'title' => 'string',
             'content' => 'string',
             'image' => 'string',
-            'category_id' => ''
+            'category_id' => 'nullable|integer|exists:categories,id',
+            'tags' => 'nullable|array',
+            'tags.*' => 'integer|exists:tags,id', // each tag must be a valid tag ID
         ]);
 
+//        dd($validated);
+        $tags = $validated['tags'];
+//        unset($tags);
         $post->update($validated);
 
-        return redirect()->route('posts.show', $post);
+        $post->tags()->sync($tags);
+
+        return redirect()->route('posts.show', $post->id);
     }
 
     public function destroy(Post $post)
