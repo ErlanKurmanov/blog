@@ -2,17 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Post\StoreRequest;
+use App\Http\Requests\Post\UpdateRequest;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\PostTag;
 use App\Models\Tag;
+use App\Services\PostService;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
+    protected $postService;
+
+    public function __construct(PostService $service)
+    {
+        $this->postService = $service;
+    }
+
     public function index()
     {
-        $posts = Post::all();
+        $posts = Post::query()->paginate(30);
         return view('post.index', ['posts' => $posts]);
     }
 
@@ -26,19 +36,11 @@ class PostController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        $validated = $request->validate([
-            'title' => 'string',
-            'content' => 'string',
-            'image' => 'string',
-            'category_id' => 'required|exists:categories,id',
-            'tags' => '',
-        ]);
-        //it's an array of tag's id:
-        $tags = $validated['tags'];
-        $post = Post::create($validated);
-        $post->tags()->attach($tags);
+        $data = $request->validated();
+
+        $this->postService->store($data);
 
         return redirect()->route('posts.index');
     }
@@ -65,24 +67,12 @@ class PostController extends Controller
     }
 
     //Sends request to server to update post
-    public function update(Request $request, int $post)
+    public function update(UpdateRequest $request, Post $post)
     {
-        $post = Post::findOrFail($post);
-        $validated = $request->validate([
-            'title' => 'string',
-            'content' => 'string',
-            'image' => 'string',
-            'category_id' => 'nullable|integer|exists:categories,id',
-            'tags' => 'nullable|array',
-            'tags.*' => 'integer|exists:tags,id', // each tag must be a valid tag ID
-        ]);
+//        $post = Post::findOrFail($post);
+        $inputData = $request->validated();
 
-//        dd($validated);
-        $tags = $validated['tags'];
-//        unset($tags);
-        $post->update($validated);
-
-        $post->tags()->sync($tags);
+        $this->postService->update($post, $inputData);
 
         return redirect()->route('posts.show', $post->id);
     }

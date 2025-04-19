@@ -11,7 +11,7 @@
         <!-- Update Form -->
         <form action="{{ route('posts.update', $post->id) }}" method="POST" {{--enctype="multipart/form-data"--}}>
             @csrf
-            @method('patch')
+            @method('PATCH')
 
             <!-- Title Input -->
             <div class="mb-3">

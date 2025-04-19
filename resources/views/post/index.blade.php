@@ -34,9 +34,9 @@
             </div>
 
             <!-- Pagination -->
-{{--            <div class="d-flex justify-content-center">--}}
-{{--                {{ $posts->links() }}--}}
-{{--            </div>--}}
+            <div class="d-flex justify-content-center">
+                {{ $posts->onEachSide(1)->links() }}
+            </div>
         @else
             <p>No posts found.</p>
         @endif

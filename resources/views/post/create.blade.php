@@ -13,13 +13,20 @@
             <!-- Title Input -->
             <div class="mb-3">
                 <label for="title" class="form-label">Post Title</label>
-                <input type="text" class="form-control" id="title" name="title" required>
+                <input value="{{old('title')}}" type="text" class="form-control" id="title" name="title" {{--<!--required-->--}}>
+                @error('title')
+                <p class="text-danger">{{ $message }}</p>
+                @enderror
             </div>
+
 
             <!-- Content Input -->
             <div class="mb-3">
                 <label for="content" class="form-label">Content</label>
-                <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
+                <textarea class="form-control" id="content" name="content" rows="5"></textarea>
+                @error('content')
+                <p class="alert alert-danger">{{ $message }}</p>
+                @enderror
             </div>
 
             <!-- Image Upload -->
@@ -32,7 +39,8 @@
                 <select class="form-select" name="category_id" id="category_id">
                     <option value="" selected>Choose category</option>
                     @foreach($categories as $category)
-                        <option value="{{$category->id}}">{{$category->title}}</option>
+                        <option {{old('category_id') == $category->id ? 'selected' : ''}}
+                            value="{{$category->id}}">{{$category->title}}</option>
                     @endforeach
                 </select>
             </div>
