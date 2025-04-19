@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 
-Route::get('/', [HomeController::class, 'index'])->name('home.index');
+Route::get('/home', [HomeController::class, 'index'])->name('home.index');
 
 //Posts operations
 Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
