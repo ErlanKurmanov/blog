@@ -1,15 +1,22 @@
 <?php
 
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\TransactionController;
-use Illuminate\Http\Request;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 
-Route::get('/home', [HomeController::class, 'index'])->name('home.index');
+
+Auth::routes();
+Route::get('/', [HomeController::class, 'index'])->name('home.index');
+
+Route::get('/about', [AboutController::class, 'index'])->name('about.index');
+Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.index');
 
 //Posts operations
 Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
@@ -23,14 +30,13 @@ Route::patch('/posts/{post}', [PostController::class, 'update'])->name('posts.up
 //Route::patch('/posts/{post}', function(Request $request){
 //    dd($request);
 //})->name('posts.update');
-
-
-
-
 Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
 
 
-Route::get('/about', [AboutController::class, 'index'])->name('about.index');
-Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.index');
 
+// Admin panel
+Route::get('admin/index', [AdminController::class, 'index'])->name('admin.index');
+
+
+//Auth
 
